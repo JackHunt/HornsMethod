@@ -47,10 +47,8 @@ def horn(P, Q):
 
         centroidsP = np.mean(P, axis=1)
         centroidsQ = np.mean(Q, axis=1)
-        A = P - np.outer(centroidsP, 
-np.ones(P.shape[1]))
-        B = Q - np.outer(centroidsQ, 
-np.ones(Q.shape[1]))
+        A = P - np.outer(centroidsP, np.ones(P.shape[1]))
+        B = Q - np.outer(centroidsQ, np.ones(Q.shape[1]))
         C = np.dot(A, B.transpose())
         U, S, V = np.linalg.svd(C)
         R = np.dot(V.transpose(), U.transpose())
