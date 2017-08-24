@@ -38,7 +38,7 @@ def applyRandomTransform(points, rotSigma, transMax, noiseSD):
 	return (np.asarray(transPoints), Rx, Ry, Rz, t)
 	
 def applyTransform(R, t, points):
-	return np.dot(points, R.transpose()) + t
+	return np.dot(R, points.transpose()).transpose() + t
 	
 def horn(pointsA, pointsB):
 	centroidsA = np.mean(pointsA, axis=0)
@@ -65,11 +65,21 @@ def displayPoints(pointsA, pointsB, pointsARectified):
 	mlab.show()
 
 def runDemo(numPoints, bcMin, bcMax, sdRad, transMax, noiseSD):
+	#Generate random points and apply random rigid transform.
 	pointsA = generateRandomPoints(numPoints, bcMin, bcMax)
 	transformed = applyRandomTransform(pointsA, sdRad, transMax, noiseSD)
+
+	#Apply Horns Method to align the point clouds.
 	trans = horn(pointsA, transformed[0])
 	rectifiedPoints = applyTransform(trans[0], trans[1], pointsA)
+
+	#Give some output.
 	displayPoints(pointsA, transformed[0], rectifiedPoints)
+
+	#Calculate RMS.
+	diff = transformed[0] - rectifiedPoints
+	rms = np.sqrt((diff**2).mean())
+	print("Registration RMS: %f\n" % rms)
 
 if __name__ == "__main__":
 	argParser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
